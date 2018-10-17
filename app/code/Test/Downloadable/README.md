@@ -4,8 +4,9 @@ then execute the setup upgrade command
 php -f bin/magento setup:upgrade
 
 # How to test
+Below screenshots are results in Magento 2.2.3.
 ## Admin
-In Catalog->Products->Edit a test downloadable product->Downloadable Information, set 'Is Visible' to No
+In Catalog->Products->Edit a test downloadable product->Downloadable Information, set 'Is Visible' to No.
 <img width="1164" alt="is_visible_column" src="https://user-images.githubusercontent.com/16327421/47118940-f28cd300-d21d-11e8-8df8-3b12c4c87c0c.png">
 and then save the product.
 
