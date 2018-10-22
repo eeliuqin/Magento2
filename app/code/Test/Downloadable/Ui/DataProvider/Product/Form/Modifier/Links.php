@@ -1,6 +1,6 @@
 <?php
 /**
- * Override Magento_Downloadable to add 'Is Visible' column
+ * add 'Is Visible'
  */
 namespace Test\Downloadable\Ui\DataProvider\Product\Form\Modifier;
 
@@ -21,94 +21,46 @@ use Test\Downloadable\Model\Source\Visible;
  * Class adds a grid with links
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Links extends \Magento\Downloadable\Ui\DataProvider\Product\Form\Modifier\Links
+class Links extends AbstractModifier 
 {
+
     /** 
      * @var Visible
      */
-    protected $visible;
+	protected $visible;
 
     /**
-     * @param LocatorInterface $locator
-     * @param StoreManagerInterface $storeManager
-     * @param ArrayManager $arrayManager
-     * @param UrlInterface $urlBuilder
-     * @param TypeUpload $typeUpload
-     * @param Shareable $shareable
-     * @param Data\Links $linksData
      * @param Visible $visible
      */
     public function __construct(
-        LocatorInterface $locator,
-        StoreManagerInterface $storeManager,
-        ArrayManager $arrayManager,
-        UrlInterface $urlBuilder,
-        TypeUpload $typeUpload,
-        Shareable $shareable,
-        Data\Links $linksData,
 		Visible $visible
     ) {
-        parent::__construct($locator, $storeManager, $arrayManager, $urlBuilder, $typeUpload, $shareable, $linksData);
-        $this->visible = $visible;
+	$this->visible = $visible;
     }
 
-    /**
-     * @return array
-     */
-    protected function getRecord()
+    public function modifyMeta(array $meta)
     {
-        $record['arguments']['data']['config'] = [
-            'componentType' => Container::NAME,
-            'isTemplate' => true,
-            'is_collection' => true,
-            'component' => 'Magento_Ui/js/dynamic-rows/record',
-            'dataScope' => '',
-        ];
-        $recordPosition['arguments']['data']['config'] = [
-            'componentType' => Form\Field::NAME,
-            'formElement' => Form\Element\Input::NAME,
-            'dataType' => Form\Element\DataType\Number::NAME,
-            'dataScope' => 'sort_order',
-            'visible' => false,
-        ];
-        $recordActionDelete['arguments']['data']['config'] = [
-            'label' => null,
-            'componentType' => 'actionDelete',
-            'fit' => true,
-        ];
-
-        return $this->arrayManager->set(
-            'children',
-            $record,
-            [
-                'container_link_title' => $this->getTitleColumn(),
-                'container_link_price' => $this->getPriceColumn(),
-                'container_file' => $this->getFileColumn(),
-                'container_sample' => $this->getSampleColumn(),
-                'is_shareable' => $this->getShareableColumn(),
-                'is_visible' => $this->getIsVisibleColumn(), //add is_visible column
-                'max_downloads' => $this->getMaxDownloadsColumn(),
-                'position' => $recordPosition,
-                'action_delete' => $recordActionDelete,
-            ]
-        );
-    }
-
+        $meta['downloadable']['children']['container_links']['children']['link']['children']['record']['children']['is_visible'] = [
+			'arguments' => [
+				'data' => [
+					'config' => [
+						'label' => __('Is Visible'),
+						'formElement' => Form\Element\Select::NAME,
+						'componentType' => Form\Field::NAME,
+						'dataType' => Form\Element\DataType\Number::NAME,
+						'options' => $this->visible->toOptionArray(), 
+					]
+				]
+			] 
+		];
+        return $meta;
+	}
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getIsVisibleColumn()
+    public function modifyData(array $data)
     {
-        $isVisibleField['arguments']['data']['config'] = [
-            'label' => __('Is Visible'),
-            'formElement' => Form\Element\Select::NAME,
-            'componentType' => Form\Field::NAME,
-            'dataType' => Form\Element\DataType\Number::NAME,
-            'dataScope' => 'is_visible',
-            'options' => $this->visible->toOptionArray(),
-        ];
-
-        return $isVisibleField;
+        return $data;
     }
 }
